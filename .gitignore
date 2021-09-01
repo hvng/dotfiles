@@ -1,0 +1,6 @@
+*.swp
+*.bak
+*.zwc
+*.pyc
+local/
+tags
