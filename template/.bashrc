@@ -1,16 +1,12 @@
-#
-# hvng
-#
+source ~/dotfiles/common/.bashrc
 
-# If not running interactively, don't do anything
-[[ $- != *i* ]] && return
-
-alias ls='ls --color=auto'
-PS1='[\u@\h \W]\$ '
-
-
-# append to the history file, don't overwrite it
-shopt -s histappend
-
-HISTSIZE=50000
-HISTFILESIZE=50000
+# if [ -n "$SSH_CONNECTION" ]; then
+#     echo 'SSH CONNECTION'
+# elif [ "${TMUX+set}" ]; then
+#     echo '----------'
+# else
+#     # open tmux by default
+#     tmux -2
+#     echo "Exiting... (ENTER to cancel)"
+#     read -t 0.2 || exit
+# fi#
