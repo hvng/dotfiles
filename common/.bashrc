@@ -14,3 +14,10 @@ shopt -s histappend
 
 HISTSIZE=50000
 HISTFILESIZE=50000
+
+
+alias vc="nvim ~/.vimrc"
+alias tc="nvim ~/.tmux.conf"
+alias zc="nvim ~/.zshrc"
+alias :q="exit"
+alias :e="nvim"

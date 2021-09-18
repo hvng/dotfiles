@@ -25,3 +25,10 @@ HISTFILESIZE=50000
 
 autoload -Uz compinit
 compinit
+
+
+alias vc="nvim ~/.vimrc"
+alias tc="nvim ~/.tmux.conf"
+alias zc="nvim ~/.zshrc"
+alias :q="exit"
+alias :e="nvim"
