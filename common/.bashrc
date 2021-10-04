@@ -21,3 +21,21 @@ alias tc="nvim ~/.tmux.conf"
 alias zc="nvim ~/.zshrc"
 alias :q="exit"
 alias :e="nvim"
+
+
+case ${OSTYPE} in
+    # For MacOS
+    darwin*)
+        # echo "Hi MacOS!"
+    ;;
+
+    # For Linux
+    linux*)
+        # Set environment variables if ibus exists
+        if which ibus > /dev/null 2>&1 ; then
+            export GTK_IM_MODULE=ibus
+            export QT_IM_MODULE=ibus
+            export XMODIFIERS=@im=ibus
+        fi
+    ;;
+esac
