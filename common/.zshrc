@@ -27,9 +27,9 @@ autoload -Uz compinit
 compinit
 
 
-alias vc="nvim ~/.vimrc"
-alias tc="nvim ~/.tmux.conf"
-alias zc="nvim ~/.zshrc"
+alias vc="nvim ~/dotfiles/common/.vimrc"
+alias tc="nvim ~/dotfiles/common/.tmux.conf"
+alias zc="nvim ~/dotfiles/common/.zshrc"
 alias :q="exit"
 alias :e="nvim"
 
