@@ -3,4 +3,5 @@
 *.zwc
 *.pyc
 local/
+backup/
 tags

@@ -23,9 +23,6 @@ DISABLE_AUTO_TITLE="true"
 HISTSIZE=50000
 HISTFILESIZE=50000
 
-autoload -Uz compinit
-compinit
-
 
 alias vc="nvim ~/dotfiles/common/.vimrc"
 alias tc="nvim ~/dotfiles/common/.tmux.conf"
