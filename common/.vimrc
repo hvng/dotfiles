@@ -58,6 +58,7 @@ let g:NERDCommentEmptyLines = 1
 let g:NERDTrimTrailingWhitespace = 1
 let g:NERDDefaultAlign = 'left'
 let g:NERDAltDelims_python = 1
+map <C-_> <Plug>NERDCommenterToggle<CR>
 
 " Jump inside files
 Plug 'easymotion/vim-easymotion'
