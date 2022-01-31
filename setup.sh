@@ -8,7 +8,7 @@ usage() {
     echo -e "\t-d\tdotfiles"
     echo -e "\t-g\tGolang (1.7)"
     echo -e "\t-h\tHugo"
-    echo -e "\t-i\tIBus Bamboo"
+    echo -e "\t-i\tIBus Bamboo & Anthy"
 }
 
 valid=0
@@ -98,7 +98,7 @@ if [[ $install_ibusbamboo = 1 ]]; then
     echo -e "\n---------"
     echo "Installing IBus Bamboo"
     echo "---------"
-    bash setup/install_ibusbamboo.sh
+    bash setup/install_ibus_bamboo_anthy.sh
 fi
 
 echo ""
