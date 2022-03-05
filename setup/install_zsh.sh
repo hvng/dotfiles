@@ -8,4 +8,4 @@ elif [[ `lsb_release -is` == "Fedora" ]]; then
     sudo dnf install zsh -y
 fi
 
-chsh -s /bin/zsh
+chsh -s $(which zsh)
