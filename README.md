@@ -7,13 +7,14 @@ Config files & setup scripts
 Clone to `$HOME/dotfiles`:
 
 ```
-Usage: ./setup.sh [-c] [-z] [-d] [-g] [-h] [-i]
+Usage: ./setup.sh [-c] [-z] [-d] [-g] [-y] [-h] [-i]
         -c      common utilities: nvim, tmux, htop, ctags, xclip, ag, ...
         -z      zsh
         -d      dotfiles
         -g      Golang (1.7)
+        -y      Yarn (+nodejs)
         -h      Hugo
-        -i      IBus Bamboo
+        -i      IBus Bamboo, IBus Anthy
 ```
 
 ## Structure

@@ -2,11 +2,12 @@
 #!/bin/bash
 
 usage() {
-    echo "Usage: $0 [-c] [-z] [-d] [-n] [-g] [-h] [-i]"
+    echo "Usage: $0 [-c] [-z] [-d] [-n] [-g] [-y] [-h] [-i]"
     echo -e "\t-c\tcommon utilities: nvim, tmux, htop, ctags, xclip, ag, ..."
     echo -e "\t-z\tzsh"
     echo -e "\t-d\tdotfiles"
     echo -e "\t-g\tGolang (1.7)"
+    echo -e "\t-y\tYarn (+nodejs)"
     echo -e "\t-h\tHugo"
     echo -e "\t-i\tIBus Bamboo & Anthy"
 }
@@ -19,7 +20,7 @@ install_golang=0
 install_hugo=0
 install_ibusbamboo=0
 
-while getopts czdghi flag; do
+while getopts czdgyhi flag; do
   case $flag in
     c)
       valid=1
@@ -36,6 +37,10 @@ while getopts czdghi flag; do
     g)
       valid=1
       install_golang=1
+      ;;
+    y)
+      valid=1
+      install_yarn=1
       ;;
     h)
       valid=1
@@ -78,6 +83,13 @@ if [[ $install_dotfiles = 1 ]]; then
     echo "Linking dotfiles"
     echo "---------"
     bash setup/dotfiles_linker.sh
+fi
+
+if [[ $install_yarn = 1 ]]; then
+    echo -e "\n---------"
+    echo "Installing Yarn"
+    echo "---------"
+    bash setup/install_yarn.sh
 fi
 
 if [[ $install_golang = 1 ]]; then
