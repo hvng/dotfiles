@@ -1,8 +1,21 @@
 # dotfiles
 Config files & setup scripts
 
+<em>(Currently, only support for Arch Linux, Darwin or other Linux distros may not get a full installation when running this setup)</em>
+
+## prerequisites
+```
+//  -Syu failed
+sudo pacman -S archlinux-keyring
+
+// Normally skip, cuz it's installed through arch installation.
+sudo pacman -S --needed base-devel 
+
+// lsb_release
+sudo pacman -S lsb-release
+```
+
 ## Setup
-<em>(Currently, only full support for Arch Linux)</em>
 
 Clone to `$HOME/dotfiles`:
 
