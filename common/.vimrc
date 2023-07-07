@@ -1,14 +1,11 @@
 "
 "
 " Hung Nguyen
-" Compatible with both vim and nvim
 
 
-
-" Disable vi compatability
 set nocompatible
 
-" Default to utf-8 (not needed/creates error for Neovim)
+" Default to utf-8 (not needed error for Neovim)
 if !has('nvim')
     set encoding=utf-8
 endif
@@ -28,13 +25,12 @@ function! s:trim(s)
 endfunction
 
 " Remap <Leader> to <Space>
-" This needs to be done before any leader-containing bindings happen
 let mapleader = "\<Space>"
 
 " Run shell commands using bash
 set shell=/bin/bash
 
-" Automatically install vim-plug plugin manager
+" Automatically install vim-plug
 let s:vim_plug_folder = (has('nvim') ? '$HOME/.config/nvim' : '$HOME/.vim') . '/autoload/'
 let s:vim_plug_path = s:vim_plug_folder . 'plug.vim'
 let s:fresh_install = 0
@@ -54,15 +50,12 @@ if empty(glob(s:vim_plug_path))
 endif
 
 
-" #############################################
-" > Plugins <
-" #############################################
-
-" Use Vundle-style path for vim-plug
+" ##################################
+" ############ Plugins ############
+" ##################################
 let s:bundle_path = (has('nvim') ? '~/.config/nvim' : '~/.vim') . '/bundle'
 execute 'call plug#begin("' . s:bundle_path . '")'
 
-" ### COMMON PLUGIN ###
 " NerdTree
 Plug 'scrooloose/nerdtree'
 let NERDTreeIgnore = ['^lang$', '__pycache__', '\.idea', 'pyc$', '.cache', '.DS_Store', '\.swp$']
@@ -129,7 +122,7 @@ noremap ; :Buffers<CR>
 
 
 " Various path/repository-related helpers
-" > Populates b:repo_file_... variables
+" Populates b:repo_file_... variables
 Plug 'hvng/vim-repo-file-search'
 
 
@@ -231,21 +224,19 @@ let g:lightline.component_function = {
 \   'filepath': string(function('s:lightline_filepath')),
 \ }
 
-
 call plug#end()
 
-"test 1 line
-"another test line
-
-" ### SETTINGS ###
-" Plugins are already installed, now we want to do the rest ^^
+" ##################################
+" ############ SETTINGS ############
+" ##################################
+" Plugins are already installed, now time for the rest ^^
 if !s:fresh_install
     syntax on
     set wildmenu
     set wildmode=longest:full,full
-    set clipboard=unnamedplus
+    set clipboard=unnamed,unnamedplus
     set number
-    set relativenumber
+    "set relativenumber
     set scrolloff=6
     set hlsearch
     set incsearch
@@ -286,11 +277,6 @@ if !s:fresh_install
     " Passive FTP mode for remote netrw
     let g:netrw_ftp_cmd = 'ftp -p'
 
-    " Versions after 703 support enabling both number and relativenumber
-    if v:version > 703
-	set number
-    endif
-
 
     " #############################################
     " > Visuals <
@@ -299,109 +285,109 @@ if !s:fresh_install
     " Cursor crosshair when we enter insert mode
     " Note we re-bind Ctrl+C in order for InsertLeave to be called
     augroup InsertModeCrossHairs
-	autocmd!
-	if exists('+cursorlineopt')
-	    " Highlight current line in insertmode, line number always
-	    " Unfixes this patch: https://github.com/vim/vim/issues/5017
-	    set cursorline
-	    set cursorlineopt=number
-	    autocmd InsertEnter * set cursorlineopt=both
-	    autocmd InsertLeave * set cursorlineopt=number
-	else
-	    " Neovim + legacy
-	    autocmd InsertEnter * set cursorline
-	    autocmd InsertLeave * set nocursorline
-	endif
-	"autocmd InsertEnter * set cursorcolumn
-	autocmd InsertLeave * set nocursorcolumn
+    autocmd!
+    if exists('+cursorlineopt')
+        " Highlight current line in insertmode, line number always
+        " Unfixes this patch: https://github.com/vim/vim/issues/5017
+        set cursorline
+        set cursorlineopt=number
+        autocmd InsertEnter * set cursorlineopt=both
+        autocmd InsertLeave * set cursorlineopt=number
+    else
+        " Neovim + legacy
+        autocmd InsertEnter * set cursorline
+        autocmd InsertLeave * set nocursorline
+    endif
+    "autocmd InsertEnter * set cursorcolumn
+    autocmd InsertLeave * set nocursorcolumn
     augroup END
 
     " Configuring colors
     set background=dark
     augroup ColorschemeOverrides
-	autocmd!
-	function! s:ColorschemeOverrides()
-	    if g:hung_colorscheme ==# 'legacy'
-		" Fallback colors for some legacy terminals
-		set t_Co=16
-		set foldcolumn=1
-		highlight FoldColumn ctermbg=7
-		highlight LineNr cterm=bold ctermfg=0 ctermbg=0
-		highlight CursorLineNr ctermfg=0 ctermbg=7
-		highlight Visual cterm=bold ctermbg=1
-		highlight TrailingWhitespace ctermbg=1
-		highlight Search ctermfg=4 ctermbg=7
-		let l:todo_color = 7
-	    else
-		" TODO: most of this won't do anything when termguicolors is set!
+    autocmd!
+    function! s:ColorschemeOverrides()
+        if g:hung_colorscheme ==# 'legacy'
+            " Fallback colors for some legacy terminals
+            set t_Co=16
+            set foldcolumn=1
+            highlight FoldColumn ctermbg=7
+            highlight LineNr cterm=bold ctermfg=0 ctermbg=0
+            highlight CursorLineNr ctermfg=0 ctermbg=7
+            highlight Visual cterm=bold ctermbg=1
+            highlight TrailingWhitespace ctermbg=1
+            highlight Search ctermfg=4 ctermbg=7
+            let l:todo_color = 7
+        else
+            " TODO: most of this won't do anything when termguicolors is set!
 
-		" When we have 256 colors available
-		" (This is usually true)
-		set t_Co=256
-		highlight LineNr ctermfg=241 ctermbg=234
-		highlight CursorLineNr cterm=bold ctermfg=232 ctermbg=250 guifg=#080808 guibg=#585858
-		highlight Visual cterm=bold ctermbg=238
-		highlight TrailingWhitespace ctermbg=52
-		let g:indentLine_color_term=237
-		highlight SpecialKey ctermfg=238
-		let l:todo_color = 247
+            " When we have 256 colors available
+            " (This is usually true)
+            set t_Co=256
+            highlight LineNr ctermfg=241 ctermbg=234
+            highlight CursorLineNr cterm=bold ctermfg=232 ctermbg=250 guifg=#080808 guibg=#585858
+            highlight Visual cterm=bold ctermbg=238
+            highlight TrailingWhitespace ctermbg=52
+            let g:indentLine_color_term=237
+            highlight SpecialKey ctermfg=238
+            let l:todo_color = 247
 
-		" Cursorword is just underline
-		highlight CursorWord0 ctermfg=NONE ctermbg=NONE guifg=NONE guibg=NONE
-		highlight CursorWord1 ctermfg=NONE ctermbg=NONE guifg=NONE guibg=NONE
+            " Cursorword is just underline
+            highlight CursorWord0 ctermfg=NONE ctermbg=NONE guifg=NONE guibg=NONE
+            highlight CursorWord1 ctermfg=NONE ctermbg=NONE guifg=NONE guibg=NONE
 
-		" The rest of this block is doing some colors for popups, eg
-		" autocomplete or floating help windows.
+            " The rest of this block is doing some colors for popups, eg
+            " autocomplete or floating help windows.
 
-		" The main purpose here is to make the Pmenu color
-		" darker than the default, as a light Pmenu can cause display
-		" issues for syntax highlighting applied within popups.
-		highlight Pmenu ctermfg=252 ctermbg=235
-		highlight PmenuSel cterm=bold ctermfg=255 ctermbg=238
+            " The main purpose here is to make the Pmenu color
+            " darker than the default, as a light Pmenu can cause display
+            " issues for syntax highlighting applied within popups.
+            highlight Pmenu ctermfg=252 ctermbg=235
+            highlight PmenuSel cterm=bold ctermfg=255 ctermbg=238
 
-		" We also darken the scrollbar to increase contrast:
-		highlight PmenuSbar ctermbg=237
+            " We also darken the scrollbar to increase contrast:
+            highlight PmenuSbar ctermbg=237
 
-		" Some newer builds of Neovim add a distinct highlight group
-		" for borders of floating windows.
-		highlight FloatBorder ctermfg=242 ctermbg=235
+            " Some newer builds of Neovim add a distinct highlight group
+            " for borders of floating windows.
+            highlight FloatBorder ctermfg=242 ctermbg=235
 
-		" And, to be explicit, we (unnecessarily) link the
-		" Neovim-specific 'normal' floating text highlight group. Like
-		" FloatBorder, this is unused in Vim8.
-		highlight link NormalFloat Pmenu
-	    endif
+            " And, to be explicit, we (unnecessarily) link the
+            " Neovim-specific 'normal' floating text highlight group. Like
+            " FloatBorder, this is unused in Vim8.
+            highlight link NormalFloat Pmenu
+        endif
 
-	    " Todo note highlighting
-	    " Copy the comment highlighting, then override (a bit superfluous)
-	    redir => l:comment_highlight
-	    silent highlight Comment
-	    redir END
-	    let l:comment_highlight = s:trim(split(l:comment_highlight, 'xxx')[1])
-	    highlight clear Todo
-	    execute 'highlight Todo ' . l:comment_highlight . ' cterm=bold ctermfg=' . l:todo_color . ' guifg=#9e9e9e'
-	endfunction
-	autocmd ColorScheme * call s:ColorschemeOverrides()
+        " Todo note highlighting
+        " Copy the comment highlighting, then override (a bit superfluous)
+        redir => l:comment_highlight
+        silent highlight Comment
+        redir END
+        let l:comment_highlight = s:trim(split(l:comment_highlight, 'xxx')[1])
+        highlight clear Todo
+        execute 'highlight Todo ' . l:comment_highlight . ' cterm=bold ctermfg=' . l:todo_color . ' guifg=#9e9e9e'
+    endfunction
+    autocmd ColorScheme * call s:ColorschemeOverrides()
     augroup END
 
     if has('nvim')
-	" Treesitter support
-	let g:hung_colorscheme = get(g:, 'brent_colorscheme', 'monokai_pro')
+        " Treesitter support
+        let g:hung_colorscheme = get(g:, 'brent_colorscheme', 'monokai_pro')
     else
-	let g:hung_colorscheme = get(g:, 'brent_colorscheme', 'xoria256')
+        let g:hung_colorscheme = get(g:, 'brent_colorscheme', 'xoria256')
     endif
     if g:hung_colorscheme !=# 'legacy'
-	execute 'colorscheme ' . g:hung_colorscheme
+        execute 'colorscheme ' . g:hung_colorscheme
     else
-	execute 'colorscheme peachpuff'
+        execute 'colorscheme peachpuff'
     endif
 
     highlight MatchParen cterm=bold,underline ctermbg=none ctermfg=7
     highlight VertSplit ctermfg=0 ctermbg=0
 
     augroup MatchTrailingWhitespace
-	autocmd!
-	autocmd VimEnter,BufEnter,WinEnter * call matchadd('TrailingWhitespace', '\s\+$')
+        autocmd!
+        autocmd VimEnter,BufEnter,WinEnter * call matchadd('TrailingWhitespace', '\s\+$')
     augroup END
 
     " #############################################
@@ -423,7 +409,6 @@ if !s:fresh_install
     nnoremap Y y$
     nnoremap D d$
 
-
     " Search utilities -- highlight matches, clear highlighting with <Esc>
     nnoremap <Esc> :noh<CR>:redraw!<CR><Esc>
 
@@ -436,6 +421,12 @@ if !s:fresh_install
     " Binding to 'replace this word'
     nnoremap <Leader>rtw :%s/\<<C-r><C-w>\>/
 
+    " Bindings for lower-effort writing, quitting, reloading
+    nnoremap <Leader>wq :wq<CR>
+    nnoremap <Leader>w :w<Bar>source $MYVIMRC<CR>
+    nnoremap <Leader>q :q<CR>
+    nnoremap <Leader>e :e<CR>
+
     " Bindings for buffer stuff
     " > bd: delete current buffer
     " > bc: clear all but current buffer
@@ -444,45 +435,45 @@ if !s:fresh_install
     nnoremap <Leader>bc :%bd\|e#<CR>
     nnoremap <Leader>baa :call <SID>buffer_add_all()<CR>
     function! s:buffer_add_all()
-	" Get a full path to the current file
-	let l:path = expand('%:p')
+        " Get a full path to the current file
+        let l:path = expand('%:p')
 
-	" Chop off the filename and add wildcard
-	let l:pattern = l:path[:-len(expand('%:t')) - 1] . '**/*.' . expand('%:e')
-	echom 'Loaded buffers matching pattern: ' . l:pattern
-	for l:path in split(glob(l:pattern), '\n')
-	    let filesize = getfsize(l:path)
-	    if filesize > 0 && filesize < 80000
-		execute 'badd ' . l:path
-	    endif
-	endfor
+        " Chop off the filename and add wildcard
+        let l:pattern = l:path[:-len(expand('%:t')) - 1] . '**/*.' . expand('%:e')
+        echom 'Loaded buffers matching pattern: ' . l:pattern
+        for l:path in split(glob(l:pattern), '\n')
+            let filesize = getfsize(l:path)
+            if filesize > 0 && filesize < 80000
+            execute 'badd ' . l:path
+            endif
+        endfor
     endfunction
 
 
     " Close preview/quickfix/location list/help windows with <Leader>c
     nnoremap <Leader>c :call <SID>window_cleanup()<CR>
     function! s:window_cleanup()
-	" Close preview windows
-	execute 'pclose'
-	" Close quickfix windows
-	execute 'cclose'
-	" Close location list windows
-	execute 'lclose'
-	" Close help windows
-	execute 'helpclose'
+        " Close preview windows
+        execute 'pclose'
+        " Close quickfix windows
+        execute 'cclose'
+        " Close location list windows
+        execute 'lclose'
+        " Close help windows
+        execute 'helpclose'
 
-	if has("nvim")
-	    TroubleClose
-	endif
+        if has("nvim")
+            TroubleClose
+        endif
 
-	" Close fugitive diffs
-	let l:diff_buffers = range(1, bufnr('$'))
-	let l:diff_buffers = filter(l:diff_buffers, 'bufname(v:val) =~# "^fugitive://"')
-	for l:b in l:diff_buffers
-	    execute 'bd ' . l:b
-	endfor
+        " Close fugitive diffs
+        let l:diff_buffers = range(1, bufnr('$'))
+        let l:diff_buffers = filter(l:diff_buffers, 'bufname(v:val) =~# "^fugitive://"')
+        for l:b in l:diff_buffers
+            execute 'bd ' . l:b
+        endfor
 
-	diffoff " Generally not needed, but handles some edge cases when multiple diffs are opened
+        diffoff " Generally not needed, but handles some edge cases when multiple diffs are opened
     endfun
 
 
@@ -490,12 +481,12 @@ if !s:fresh_install
     " > Automatic window renaming for tmux <
     " #############################################
     if exists('$TMUX')
-	augroup TmuxHelpers
-	  " TODO: fix strange behavior when we break-pane in tmux
-	    autocmd!
-	    autocmd BufReadPost,FileReadPost,BufNewFile,BufEnter,FocusGained * call system('tmux rename-window "vim ' . expand('%:t') . '"')
-	    autocmd VimLeave,FocusLost * call system('tmux set-window-option automatic-rename')
-	augroup END
+    augroup TmuxHelpers
+      " TODO: fix strange behavior when we break-pane in tmux
+        autocmd!
+        autocmd BufReadPost,FileReadPost,BufNewFile,BufEnter,FocusGained * call system('tmux rename-window "vim ' . expand('%:t') . '"')
+        autocmd VimLeave,FocusLost * call system('tmux set-window-option automatic-rename')
+    augroup END
     endif
 
     " #############################################
@@ -511,11 +502,11 @@ if !s:fresh_install
     " > Meta <
     " #############################################
     augroup AutoReloadVimRC
-	autocmd!
-	autocmd BufWritePost $MYVIMRC source $MYVIMRC
+        autocmd!
+        autocmd BufWritePost $MYVIMRC source $MYVIMRC
 
-	" For init.vim->.vimrc symlinks in Neovim
-	autocmd BufWritePost .vimrc source $MYVIMRC
+        " For init.vim->.vimrc symlinks in Neovim
+        autocmd BufWritePost .vimrc source $MYVIMRC
     augroup END
 
 
@@ -525,27 +516,27 @@ if !s:fresh_install
     nnoremap <silent> <Leader>f :call <SID>toggle_friendly_mode(1)<CR>
     let s:hung_use_friendly_mode = 1
     function! s:toggle_friendly_mode(verbose)
-	if s:hung_use_friendly_mode
-	    nnoremap <silent> <Up> :resize -3<CR>
-	    nnoremap <silent> <Down> :resize +3<CR>
-	    nnoremap <silent> <Left>  :vertical resize -3<CR>
-	    nnoremap <silent> <Right> :vertical resize +3<CR>
-	    set mouse=
-	    let s:hung_use_friendly_mode = 0
-	    if a:verbose
-		echo 'disabled friendly mode!'
-	    endif
-	else
-	    unmap <silent> <Up>
-	    unmap <silent> <Down>
-	    unmap <silent> <Right>
-	    unmap <silent> <Left>
-	    set mouse=a
-	    let s:hung_use_friendly_mode = 1
-	    if a:verbose
-		echo 'enabled friendly mode!'
-	    endif
-	endif
+        if s:hung_use_friendly_mode
+            nnoremap <silent> <Up> :resize -3<CR>
+            nnoremap <silent> <Down> :resize +3<CR>
+            nnoremap <silent> <Left>  :vertical resize -3<CR>
+            nnoremap <silent> <Right> :vertical resize +3<CR>
+            set mouse=
+            let s:hung_use_friendly_mode = 0
+            if a:verbose
+            echo 'disabled friendly mode!'
+            endif
+        else
+            unmap <silent> <Up>
+            unmap <silent> <Down>
+            unmap <silent> <Right>
+            unmap <silent> <Left>
+            set mouse=a
+            let s:hung_use_friendly_mode = 1
+            if a:verbose
+            echo 'enabled friendly mode!'
+            endif
+        endif
     endfunction
     call <SID>toggle_friendly_mode(0)
 

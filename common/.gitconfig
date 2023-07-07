@@ -1,7 +1,7 @@
 # Add user info later on local for specific account
-# [user]
-#    email = hvngcs@gmail.com
-#    name = Hung Nguyen
+[user]
+    email = hvngcs@gmail.com
+    name = Hung Nguyen
 [core]
     editor = vim
 [color]
