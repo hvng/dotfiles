@@ -62,7 +62,6 @@ endif
 let s:bundle_path = (has('nvim') ? '~/.config/nvim' : '~/.vim') . '/bundle'
 execute 'call plug#begin("' . s:bundle_path . '")'
 
-" ### COMMON PLUGIN ###
 " NerdTree
 Plug 'scrooloose/nerdtree'
 let NERDTreeIgnore = ['^lang$', '__pycache__', '\.idea', 'pyc$', '.cache', '.DS_Store', '\.swp$']
