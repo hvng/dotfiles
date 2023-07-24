@@ -50,9 +50,9 @@ if empty(glob(s:vim_plug_path))
 endif
 
 
-" ##################################
-" ############ Plugins ############
-" ##################################
+" ###############################################
+" ################### Plugins ###################
+" ###############################################
 let s:bundle_path = (has('nvim') ? '~/.config/nvim' : '~/.vim') . '/bundle'
 execute 'call plug#begin("' . s:bundle_path . '")'
 
@@ -75,7 +75,7 @@ let g:NERDCommentEmptyLines = 1
 let g:NERDTrimTrailingWhitespace = 1
 let g:NERDDefaultAlign = 'left'
 let g:NERDAltDelims_python = 1
-map <C-_> <Plug>NERDCommenterToggle<CR>
+map <Leader>/ <Plug>NERDCommenterToggle<CR>
 
 
 " Jump inside files
@@ -124,6 +124,12 @@ noremap ; :Buffers<CR>
 " Various path/repository-related helpers
 " Populates b:repo_file_... variables
 Plug 'hvng/vim-repo-file-search'
+
+
+" Display markers to signify different indentation levels
+Plug 'Yggdroot/indentLine'
+let g:indentLine_char = '·'
+let g:indentLine_fileTypeExclude = ['json', 'markdown', 'tex']
 
 
 " Git, Mecurial
@@ -224,7 +230,351 @@ let g:lightline.component_function = {
 \   'filepath': string(function('s:lightline_filepath')),
 \ }
 
+" ###############
+" > NEOVIM PLUG <
+" ###############
+" LONGIF
+" Functions are called after plug#end. Note: Can't indent the lua code
+if has("nvim")
+
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
+function! s:treesitter_configure()
+lua << EOF
+require'nvim-treesitter.configs'.setup {
+    -- A list of parser names, or "all"
+    ensure_installed = {
+        "cpp",
+        "lua",
+        "vim",
+        "python",
+        "html",
+        "css",
+        "javascript",
+        "markdown",
+    },
+
+    -- Install parsers synchronously (only applied to `ensure_installed`)
+    sync_install = false,
+
+    -- Automatically install missing parsers when entering buffer
+    auto_install = true,
+
+    -- List of parsers to ignore installing (for "all")
+    ignore_install = {},
+
+    ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
+    -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
+
+    highlight = {
+        -- `false` will disable the whole extension
+        enable = true,
+
+        -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
+        -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
+        -- the name of the parser)
+        -- list of language that will be disabled
+        disable = {},
+
+        -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+        -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+        -- Using this option may slow down your editor, and you may see some duplicate highlights.
+        -- Instead of true it can also be a list of languages
+        additional_vim_regex_highlighting = false,
+    },
+}
+EOF
+endfunction
+
+
+" LSP plugs for autocompletion, jump to def, etc
+Plug 'williamboman/mason.nvim', { 'do': ':MasonUpdate' }
+Plug 'williamboman/mason-lspconfig.nvim'
+Plug 'neovim/nvim-lspconfig'
+
+" Make colors a bit less distracting
+augroup LspColors
+    autocmd!
+    function! s:SetLspColors()
+        highlight DiagnosticVirtualTextError ctermfg=238 guifg=#8c3032
+        highlight DiagnosticVirtualTextWarn ctermfg=238 guifg=#5a5a30
+        highlight DiagnosticVirtualTextInfo ctermfg=238 guifg=#303f5a
+        highlight DiagnosticVirtualTextHint ctermfg=238 guifg=#305a35
+    endfunction
+    autocmd ColorScheme * call s:SetLspColors()
+augroup END
+
+function! s:configure_mason()
+lua << EOF
+require("mason").setup()
+require("mason-lspconfig").setup()
+
+-- Use LspAttach autocommand to only map the following keys
+-- after the language server attaches to the current buffer
+vim.api.nvim_create_autocmd('LspAttach', {
+    group = vim.api.nvim_create_augroup('UserLspConfig', {}),
+    callback = function(ev)
+        -- Enable completion triggered by <c-x><c-o>
+        vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+
+        vim.api.nvim_create_autocmd("CursorHold", {
+            buffer = bufnr,
+            callback = function()
+                local opts = {
+                    focusable = false,
+                    close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+                    border = "rounded",
+                    source = "always",
+                    prefix = " ",
+                    scope = "cursor",
+                }
+                vim.diagnostic.open_float(nil, opts)
+            end
+        })
+        vim.lsp.handlers["textDocument/hover"] =
+            vim.lsp.with(
+            vim.lsp.handlers.hover,
+            {
+                border = "rounded"
+            }
+        )
+
+        vim.lsp.handlers["textDocument/signatureHelp"] =
+            vim.lsp.with(
+            vim.lsp.handlers.signature_help,
+            {
+                border = "rounded"
+            }
+        )
+
+        -- Buffer local mappings.
+        -- See `:help vim.lsp.*` for documentation on any of the below functions
+        local opts = { buffer = ev.buf }
+        vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+        vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+        vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+        vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+        vim.keymap.set('n', '<space>la', vim.lsp.buf.add_workspace_folder, opts)
+        vim.keymap.set('n', '<space>lr', vim.lsp.buf.remove_workspace_folder, opts)
+        vim.keymap.set('n', '<space>ll', function()
+            print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+        end, opts)
+        vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
+        vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, opts)
+        vim.keymap.set('n', '<C-S-d>', vim.lsp.buf.type_definition, opts)
+        vim.keymap.set('n', '<C-S-f>', function()
+            vim.lsp.buf.format { async = true }
+        end, opts)
+    end,
+})
+EOF
+endfunction
+
+
+" Completion
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/cmp-vsnip'
+Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
+Plug 'hrsh7th/cmp-emoji'
+
+" Completion bindings
+" Use <CR> for completion confirmation, <Tab> and <S-Tab> for selection
+function! s:smart_carriage_return()
+
+    if !pumvisible()
+        " No completion window open -> insert line break
+        return "\<CR>"
+    endif
+    if exists('*complete_info') && complete_info()['selected'] == -1
+        " No element selected: close the completion window with Ctrl+E, then
+        " carriage return
+        "
+        " Requires Vim >8.1ish
+        return "\<C-e>\<CR>"
+    endif
+
+    " Select completion
+    return "\<C-y>"
+endfunction
+inoremap <expr> <CR> <SID>smart_carriage_return()
+
+smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+
+function! s:setup_nvim_cmp()
+lua << EOF
+    local has_words_before = function()
+        if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
+        local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+        return col ~= 0 and vim.api.nvim_buf_get_text(0, line-1, 0, line-1, col, {})[1]:match("^%s*$") == nil
+    end
+
+    local cmp = require('cmp')
+    -- Set up nvim-cmp.
+    cmp.setup({
+        snippet = {
+            -- REQUIRED - you must specify a snippet engine
+            expand = function(args)
+                vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+                -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+                -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+                -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+            end,
+        },
+        window = {
+            completion = cmp.config.window.bordered(),
+            documentation = cmp.config.window.bordered(),
+        },
+        mapping = cmp.mapping.preset.insert({
+            ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+            ['<C-f>'] = cmp.mapping.scroll_docs(4),
+            ['<C-Space>'] = cmp.mapping.complete(),
+            ['<CR>'] = cmp.mapping.confirm({ select = false }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+            ["<Tab>"] = vim.schedule_wrap(function(fallback)
+                if cmp.visible() and has_words_before() then
+                    cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+                else
+                    fallback()
+                end
+            end),
+            ['<S-Tab>'] = function(fallback)
+                if cmp.visible() then
+                    cmp.select_prev_item()
+                else
+                    fallback()
+                end
+            end
+        }),
+        sources = cmp.config.sources({
+            { name = 'nvim_lsp' },
+            { name = 'nvim_lsp_signature_help' },
+            { name = 'emoji' },
+            { name = 'path' },
+            { name = 'vsnip' }, -- For vsnip users.
+            -- { name = 'luasnip' }, -- For luasnip users.
+            -- { name = 'ultisnips' }, -- For ultisnips users.
+            -- { name = 'snippy' }, -- For snippy users.
+        }, {
+            { name = 'buffer' },
+        })
+    })
+
+    -- Set configuration for specific filetype.
+    cmp.setup.filetype('gitcommit', {
+        sources = cmp.config.sources({
+            { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
+            { name = 'emoji' }
+        }, {
+            { name = 'buffer' },
+        })
+    })
+
+    -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+    cmp.setup.cmdline({ '/', '?' }, {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = {
+            { name = 'buffer' }
+        }
+    })
+
+    -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+    cmp.setup.cmdline(':', {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = cmp.config.sources({
+            { name = 'path' }
+        }, {
+            { name = 'cmdline' }
+        })
+    })
+
+    require("mason-lspconfig").setup {
+        ensure_installed = { "pyright", "tsserver", "eslint", "clangd" },
+    }
+
+    -- Set up lspconfig.
+    local capabilities = require('cmp_nvim_lsp').default_capabilities()
+        require("lspconfig").pyright.setup{
+            capabilities = capabilities
+        }
+        require("lspconfig").tsserver.setup{
+            capabilities = capabilities
+        }
+        require("lspconfig").eslint.setup{
+            capabilities = capabilities
+        }
+        require("lspconfig").clangd.setup{
+            capabilities = capabilities
+        }
+EOF
+endfunction
+
+
+Plug 'folke/trouble.nvim'
+
+nmap <Leader><Tab> :TroubleToggle<CR>
+
+function! s:configure_trouble()
+lua << EOF
+require("trouble").setup {
+    position = "bottom", -- position of the list can be: bottom, top, left, right
+    height = 10, -- height of the trouble list when position is top or bottom
+    width = 50, -- width of the list when position is left or right
+    icons = false, -- use devicons for filenames
+    mode = "workspace_diagnostics", -- "workspace_diagnostics", "document_diagnostics", "quickfix", "lsp_references", "loclist"
+    fold_open = "v", -- icon used for open folds
+    fold_closed = ">", -- icon used for closed folds
+    group = true, -- group results by file
+    padding = true, -- add an extra new line on top of the list
+    action_keys = { -- key mappings for actions in the trouble list
+        -- map to {} to remove a mapping, for example:
+        -- close = {},
+        close = "q", -- close the list
+        cancel = "<esc>", -- cancel the preview and get back to your last window / buffer / cursor
+        refresh = "r", -- manually refresh
+        jump = {"<cr>", "<tab>"}, -- jump to the diagnostic or open / close folds
+        open_split = { "<c-x>" }, -- open buffer in new split
+        open_vsplit = { "<c-v>" }, -- open buffer in new vsplit
+        open_tab = { "<c-t>" }, -- open buffer in new tab
+        jump_close = {"o"}, -- jump to the diagnostic and close the list
+        toggle_mode = "m", -- toggle between "workspace" and "document" diagnostics mode
+        toggle_preview = "P", -- toggle auto_preview
+        hover = "K", -- opens a small popup with the full multiline message
+        preview = "p", -- preview the diagnostic location
+        close_folds = {"zM", "zm"}, -- close all folds
+        open_folds = {"zR", "zr"}, -- open all folds
+        toggle_fold = {"zA", "za"}, -- toggle fold of current file
+        previous = "k", -- previous item
+        next = "j" -- next item
+    },
+    indent_lines = true, -- add an indent guide below the fold icons
+    auto_open = false, -- automatically open the list when you have diagnostics
+    auto_close = false, -- automatically close the list when you have no diagnostics
+    auto_preview = true, -- automatically preview the location of the diagnostic. <esc> to close preview and go back to last window
+    auto_fold = false, -- automatically fold a file trouble list at creation
+    auto_jump = {"lsp_definitions"}, -- for the given modes, automatically jump if there is only a single result
+    signs = {
+        -- icons / text used for a diagnostic
+        error = "error",
+        warning = "warn ",
+        hint = "hint ",
+        information = "info "
+    },
+    use_diagnostic_signs = false -- enabling this will use the signs defined in your lsp client
+  }
+EOF
+endfunction
+
+" End LONGIF
+endif
+
 call plug#end()
+
+
 
 " ##################################
 " ############ SETTINGS ############
@@ -232,6 +582,7 @@ call plug#end()
 " Plugins are already installed, now time for the rest ^^
 if !s:fresh_install
     syntax on
+    set autochdir
     set wildmenu
     set wildmode=longest:full,full
     set clipboard=unnamed,unnamedplus
@@ -258,6 +609,15 @@ if !s:fresh_install
     set list listchars=tab:>·,trail:\ ,extends:»,precedes:«,nbsp:×
     filetype plugin indent on
 
+    " Some stuffs for neovim
+    if has('nvim')
+        call s:configure_mason()
+        call s:setup_nvim_cmp()
+        call s:configure_trouble()
+        call s:treesitter_configure()
+    endif
+
+
     " Hide redundant mode indicator underneath statusline
     set noshowmode
 
@@ -278,9 +638,9 @@ if !s:fresh_install
     let g:netrw_ftp_cmd = 'ftp -p'
 
 
-    " #############################################
+    " ###########
     " > Visuals <
-    " #############################################
+    " ###########
 
     " Cursor crosshair when we enter insert mode
     " Note we re-bind Ctrl+C in order for InsertLeave to be called
@@ -390,9 +750,9 @@ if !s:fresh_install
         autocmd VimEnter,BufEnter,WinEnter * call matchadd('TrailingWhitespace', '\s\+$')
     augroup END
 
-    " #############################################
+    " ##############################
     " > Key mappings for usability <
-    " #############################################
+    " ##############################
 
     " Match tmux behavior + bindings (with <C-w> instead of <C-b>)
     nmap <C-w>" :sp<CR>
@@ -477,9 +837,9 @@ if !s:fresh_install
     endfun
 
 
-    " #############################################
+    " ######################################
     " > Automatic window renaming for tmux <
-    " #############################################
+    " ######################################
     if exists('$TMUX')
     augroup TmuxHelpers
       " TODO: fix strange behavior when we break-pane in tmux
@@ -489,18 +849,18 @@ if !s:fresh_install
     augroup END
     endif
 
-    " #############################################
+    " ##############
     " > Spellcheck <
-    " #############################################
+    " ##############
     map <F5> :setlocal spell! spelllang=en_us<CR>
     inoremap <F5> <C-\><C-O>:setlocal spelllang=en_us spell! spell?<CR>
     highlight clear SpellBad
     highlight SpellBad cterm=bold,italic ctermfg=red
 
 
-    " #############################################
+    " ########
     " > Meta <
-    " #############################################
+    " ########
     augroup AutoReloadVimRC
         autocmd!
         autocmd BufWritePost $MYVIMRC source $MYVIMRC
@@ -509,10 +869,9 @@ if !s:fresh_install
         autocmd BufWritePost .vimrc source $MYVIMRC
     augroup END
 
-
-   " #############################################
-   " > Friendly mode ^^ <
-   " #############################################
+    " ####################
+    " > Friendly mode ^^ <
+    " ####################
     nnoremap <silent> <Leader>f :call <SID>toggle_friendly_mode(1)<CR>
     let s:hung_use_friendly_mode = 1
     function! s:toggle_friendly_mode(verbose)
