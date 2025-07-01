@@ -493,7 +493,7 @@ lua << EOF
     })
 
     require("mason-lspconfig").setup {
-        ensure_installed = { "pyright", "tsserver", "eslint", "clangd" },
+        ensure_installed = { "pyright", "ts_ls", "eslint", "clangd" },
     }
 
     -- Set up lspconfig.
@@ -501,7 +501,7 @@ lua << EOF
         require("lspconfig").pyright.setup{
             capabilities = capabilities
         }
-        require("lspconfig").tsserver.setup{
+        require("lspconfig").ts_ls.setup{
             capabilities = capabilities
         }
         require("lspconfig").eslint.setup{
