@@ -75,7 +75,6 @@ else
     Plug 'mhinz/vim-signify', { 'branch': 'legacy' }
 endif
 
-
 " --- Utilities ---
 Plug 'jmcantrell/vim-diffchanges'
 Plug 'ap/vim-css-color'
@@ -169,7 +168,6 @@ if !s:fresh_install
     set wildmode=longest:full,full
     set clipboard=unnamed,unnamedplus
     set number
-    "set relativenumber
     set scrolloff=6
     set hlsearch
     set incsearch
@@ -200,7 +198,6 @@ if !s:fresh_install
     " ####################
     " > Visuals & colors <
     " ####################
-
     " --- Cursor crosshair when we enter insert mode ---
     augroup InsertModeCrossHairs
         autocmd!
@@ -267,11 +264,12 @@ if !s:fresh_install
     map <Leader>/ <Plug>NERDCommenterToggle
     map s <Plug>(easymotion-overwin-f)
     map S <Plug>(easymotion-overwin-w)
-    noremap ` :Files<CR>
+    noremap <C-p> :Files<CR>
+    noremap ` :Rg<CR>
+    noremap <C-`> :Rg <cword><CR>
     noremap ; :Buffers<CR>
+    noremap <C-;> :History<CR>
     nnoremap <Leader>dc :DiffChangesDiffToggle<CR>
-    nmap <C-w>" :sp<CR>
-    nmap <C-w>% :vsp<CR>
     nnoremap <Leader>tt :tabnew<CR>
     nnoremap <Leader>tn :tabn<CR>
     vnoremap <Tab> >
@@ -280,14 +278,8 @@ if !s:fresh_install
     nnoremap D d$
     nnoremap <Esc> :noh<CR>:redraw!<CR><Esc>
     nnoremap <Bslash> za
-    nnoremap <Leader>ttws :%s/\s\+$//e<CR>
-    nnoremap <Leader>rtw :%s/\<<C-r><C-w>\>/
-    nnoremap <Leader>wq :wq<CR>
+    nnoremap <Leader>rw :%s/\<<C-r><C-w>\>/
     nnoremap <Leader>w :w<Bar>source $MYVIMRC<CR>
-    nnoremap <Leader>q :q<CR>
-    nnoremap <Leader>e :e<CR>
-    nnoremap <Leader>bd :bd<CR>
-    nnoremap <Leader>bc :%bd\|e#<CR>
 
     " --- Spellcheck ---
     map <F5> :setlocal spell! spelllang=en_us<CR>
