@@ -16,9 +16,9 @@ HISTSIZE=50000
 HISTFILESIZE=50000
 
 
-alias vc="nvim ~/.vimrc"
-alias tc="nvim ~/.tmux.conf"
-alias zc="nvim ~/.zshrc"
+alias nvc="nvim ~/dotfiles/common/init.lua"
+alias vc="nvim ~/dotfiles/common/.vimrc"
+alias tc="nvim ~/dotfiles/common/.tmux.conf"
 alias :q="exit"
 alias :e="nvim"
 

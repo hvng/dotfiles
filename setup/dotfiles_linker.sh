@@ -27,13 +27,18 @@ done
 ln -sf $local_dir/.[^.]* ~/
 echo "DONE"
 
-# Link neovim config to standard vimrc location
+# Link neovim config
 echo -n "Linking Neovim config... "
 mkdir -p ~/.config/nvim
-ln -sf ~/.vimrc ~/.config/nvim/init.vim
+# Back up existing init.lua if it exists
+if [ -f ~/.config/nvim/init.lua ]; then
+    mv ~/.config/nvim/init.lua $backup_dir
+fi
+ln -sf $local_dir/init.lua ~/.config/nvim/init.lua
 echo "DONE"
 
 # Install plugins
 echo -n "Setting up Neovim plugins... "
-nvim +PlugUpdate +qall
+nvim --headless -c "Lazy! sync" -c "qa"
 echo "DONE"
+

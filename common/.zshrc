@@ -10,7 +10,7 @@ antigen use oh-my-zsh
 antigen bundle git
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle history-substring-search
-antigen theme crunch.zsh-theme 
+antigen theme crunch.zsh-theme
 antigen apply
 
 HYPHEN_INSENSITIVE="true"
@@ -24,6 +24,7 @@ HISTSIZE=50000
 HISTFILESIZE=50000
 
 
+alias nvc="nvim ~/dotfiles/common/init.lua"
 alias vc="nvim ~/dotfiles/common/.vimrc"
 alias tc="nvim ~/dotfiles/common/.tmux.conf"
 alias zc="nvim ~/dotfiles/common/.zshrc"
