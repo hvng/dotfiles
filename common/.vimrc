@@ -68,13 +68,13 @@ Plug 'junegunn/fzf.vim'
 
 " --- VCS ---
 Plug 'tpope/vim-fugitive'
+Plug 'ludovicchabant/vim-lawrencium'
 " Use legacy branch for Vim versions before 8.0.902
 if has('patch-8.0.902')
     Plug 'mhinz/vim-signify'
 else
     Plug 'mhinz/vim-signify', { 'branch': 'legacy' }
 endif
-
 
 " --- Utilities ---
 Plug 'jmcantrell/vim-diffchanges'
@@ -169,7 +169,6 @@ if !s:fresh_install
     set wildmode=longest:full,full
     set clipboard=unnamed,unnamedplus
     set number
-    "set relativenumber
     set scrolloff=6
     set hlsearch
     set incsearch
@@ -200,7 +199,6 @@ if !s:fresh_install
     " ####################
     " > Visuals & colors <
     " ####################
-
     " --- Cursor crosshair when we enter insert mode ---
     augroup InsertModeCrossHairs
         autocmd!
@@ -264,14 +262,15 @@ if !s:fresh_install
 
     " --- Mappings ---
     map <C-n> :NERDTreeToggle<CR>
-    map <Leader>/ <Plug>NERDCommenterToggle
+    map <C-/> <Plug>NERDCommenterToggle
     map s <Plug>(easymotion-overwin-f)
     map S <Plug>(easymotion-overwin-w)
-    noremap ` :Files<CR>
+    noremap <C-p> :Files<CR>
+    noremap ` :Rg<CR>
+    noremap <C-`> :Rg <cword><CR>
     noremap ; :Buffers<CR>
+    noremap <C-;> :History<CR>
     nnoremap <Leader>dc :DiffChangesDiffToggle<CR>
-    nmap <C-w>" :sp<CR>
-    nmap <C-w>% :vsp<CR>
     nnoremap <Leader>tt :tabnew<CR>
     nnoremap <Leader>tn :tabn<CR>
     vnoremap <Tab> >
@@ -280,14 +279,8 @@ if !s:fresh_install
     nnoremap D d$
     nnoremap <Esc> :noh<CR>:redraw!<CR><Esc>
     nnoremap <Bslash> za
-    nnoremap <Leader>ttws :%s/\s\+$//e<CR>
-    nnoremap <Leader>rtw :%s/\<<C-r><C-w>\>/
-    nnoremap <Leader>wq :wq<CR>
+    nnoremap <Leader>rw :%s/\<<C-r><C-w>\>/
     nnoremap <Leader>w :w<Bar>source $MYVIMRC<CR>
-    nnoremap <Leader>q :q<CR>
-    nnoremap <Leader>e :e<CR>
-    nnoremap <Leader>bd :bd<CR>
-    nnoremap <Leader>bc :%bd\|e#<CR>
 
     " --- Spellcheck ---
     map <F5> :setlocal spell! spelllang=en_us<CR>
@@ -296,60 +289,50 @@ if !s:fresh_install
     highlight SpellBad cterm=bold,italic ctermfg=red
 
     " --- VCS functions ---
-    nnoremap <Leader>vcd :call <SID>vc_diff()<CR>
+    nnoremap <Leader>vd :call <SID>vc_diff()<CR>
     function! s:vc_diff()
         if get(b:, 'repo_file_search_type', '') ==# 'hg'
             Hgvdiff
         elseif get(b:, 'repo_file_search_type', '') ==# 'git'
-            Gdiff
+            G diff
         endif
     endfunction
 
-    nnoremap <Leader>vcs :call <SID>vc_status()<CR>
+    nnoremap <Leader>vs :call <SID>vc_status()<CR>
     function! s:vc_status()
         if get(b:, 'repo_file_search_type', '') ==# 'hg'
             Hgstatus
         elseif get(b:, 'repo_file_search_type', '') ==# 'git'
-            Gstatus
+            G status
         endif
     endfunction
 
-    nnoremap <Leader>vcb :call <SID>vc_blame()<CR>
+    nnoremap <Leader>vb :call <SID>vc_blame()<CR>
     function! s:vc_blame()
         if get(b:, 'repo_file_search_type', '') ==# 'hg'
             Hgannotate
         elseif get(b:, 'repo_file_search_type', '') ==# 'git'
-            Gblame
+            G blame
         endif
     endfunction
 
-    " --- Buffer function ---
-    nnoremap <Leader>baa :call <SID>buffer_add_all()<CR>
-    function! s:buffer_add_all()
-        let l:path = expand('%:p')
-        let l:pattern = l:path[:-len(expand('%:t')) - 1] . '**/*.' . expand('%:e')
-        echom 'Loaded buffers matching pattern: ' . l:pattern
-        for l:path in split(glob(l:pattern), '\n')
-            let filesize = getfsize(l:path)
-            if filesize > 0 && filesize < 80000
-                execute 'badd ' . l:path
-            endif
-        endfor
-    endfunction
+    " --- VCS hunk preview & undo (vim-signify) ---
+    nnoremap <Leader>hp :SignifyHunkDiff<CR> " hunk preview
+    nnoremap <Leader>hu :SignifyHunkUndo<CR> " hunk undo
 
     " --- Window cleanup function ---
     nnoremap <Leader>c :call <SID>window_cleanup()<CR>
     function! s:window_cleanup()
-        execute 'pclose'
-        execute 'cclose'
-        execute 'lclose'
-        execute 'helpclose'
+        silent! pclose
+        silent! cclose
+        silent! lclose
+        silent! helpclose
         " Close fugitive diffs
         let l:diff_buffers = filter(range(1, bufnr('$')), 'bufname(v:val) =~# "^fugitive://"')
         for l:b in l:diff_buffers
             execute 'bd ' . l:b
         endfor
-        diffoff
+        silent! diffoff
     endfun
 
     " --- Tmux automatic window renaming ---
