@@ -4,14 +4,14 @@ case ${OSTYPE} in
     # For MacOS
     darwin*)
         echo "Hi MacOS!"
-    brew install neovim ctags tmux htop xclip the_silver_searcher wget
+    brew install neovim ctags tmux htop xclip the_silver_searcher wget ripgrep
     ;;
 
     # For Linux
     linux*)
     if [[ `lsb_release -is` == "Arch" ]]; then
         sudo pacman -Syyu
-        sudo pacman -Syu neovim ctags tmux htop xclip the_silver_searcher wget --noconfirm
+        sudo pacman -Syu neovim ctags tmux htop xclip the_silver_searcher wget ripgrep --noconfirm
 
         # install yay
         pacman -Q yay
@@ -32,7 +32,7 @@ case ${OSTYPE} in
 
     elif [[ `lsb_release -is` == "Fedora" ]]; then
         sudo dnf install neovim ctags tmux htop xclip the_silver_searcher -y
-    fi       
+    fi
     ;;
 esac
 
