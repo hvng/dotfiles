@@ -21,3 +21,5 @@
     untracked = red
 [http]
     sslVerify = false
+[alias]
+    mine = !git config user.name 'Hung Nguyen' && git config user.email 'hvngcs@gmail.com'
