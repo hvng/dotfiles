@@ -30,6 +30,20 @@ alias tc="nvim ~/dotfiles/common/.tmux.conf"
 alias zc="nvim ~/dotfiles/common/.zshrc"
 alias :q="exit"
 alias :e="nvim"
+runcpp() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: runcpp <file.cpp>"
+        return 1
+    fi
+    clang++ -std=c++23 -Wall -Wextra -O2 "$@" -o /tmp/a.out && /tmp/a.out
+}
+runcc() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: runcc <file.cpp>"
+        return 1
+    fi
+    clang++ -std=c++23 -w "$@" -o /tmp/a.out && /tmp/a.out
+}
 
 
 case ${OSTYPE} in
