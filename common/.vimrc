@@ -61,6 +61,7 @@ Plug 'itchyny/lightline.vim'
 " --- Editing ---
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
+Plug 'jiangmiao/auto-pairs'
 
 " --- Fuzzy finding ---
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
