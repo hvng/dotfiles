@@ -2,11 +2,12 @@
 #!/bin/bash
 
 usage() {
-    echo "Usage: $0 [-c] [-z] [-d] [-n] [-g] [-y] [-h] [-i]"
-    echo -e "\t-c\tcommon utilities: nvim, tmux, htop, ctags, xclip, ag, ..."
+    echo "Usage: $0 [-u] [-z] [-d] [-n] [-g] [-c] [-y] [-h] [-i]"
+    echo -e "\t-u\tutilities: nvim, tmux, htop, ctags, xclip, ag, ..."
     echo -e "\t-z\tzsh"
     echo -e "\t-d\tdotfiles"
     echo -e "\t-g\tGolang (1.7)"
+    echo -e "\t-c\tClang"
     echo -e "\t-y\tYarn (+nodejs)"
     echo -e "\t-h\tHugo"
     echo -e "\t-i\tIBus Bamboo & Anthy"
@@ -17,12 +18,13 @@ install_dotfiles=0
 install_common=0
 install_zsh=0
 install_golang=0
+install_clang=0
 install_hugo=0
 install_ibusbamboo=0
 
 while getopts czdgyhi flag; do
   case $flag in
-    c)
+    u)
       valid=1
       install_common=1
       ;;
@@ -37,6 +39,10 @@ while getopts czdgyhi flag; do
     g)
       valid=1
       install_golang=1
+      ;;
+    c)
+      valid=1
+      install_clang=1
       ;;
     y)
       valid=1
@@ -66,7 +72,7 @@ sudo -v
 
 if [[ $install_common = 1 ]]; then
     echo -e "\n---------"
-    echo "Installing common utilities"
+    echo "Installing utilities"
     echo "---------"
     bash setup/install_common.sh
 fi
@@ -97,6 +103,13 @@ if [[ $install_golang = 1 ]]; then
     echo "Installing Golang"
     echo "---------"
     bash setup/install_golang.sh
+fi
+
+if [[ $install_clang = 1 ]]; then
+    echo -e "\n---------"
+    echo "Installing Clang"
+    echo "---------"
+    bash setup/install_clang.sh
 fi
 
 if [[ $install_hugo = 1 ]]; then
