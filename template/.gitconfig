@@ -1,2 +1,13 @@
 [include]
     path = ~/dotfiles/common/.gitconfig
+
+[user] # default global user
+    email = default@user
+    name = hung
+
+# The / at the end to ensure it applies to subfolders
+[includeIf "gitdir:~/some-repos/"]
+    path = ~/dotfiles/local/.gitconfig-1
+
+[includeIf "gitdir:~/hhh/"]
+    path = ~/dotfiles/local/.gitconfig-0
