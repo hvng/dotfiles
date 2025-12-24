@@ -190,7 +190,15 @@ local lazy_plugins = {
 		"navarasu/onedark.nvim",
 		priority = 1000,
 		config = function()
-			require("onedark").setup({ style = "darker" })
+			require("onedark").setup(
+				{
+					style = "darker",
+					highlights = {
+						["@comment"] = { fg = "#6b7280", fmt = "italic" },
+						["@lsp.type.comment"] = { fg = "#6b7280", fmt = "italic" },
+					}
+				}
+			)
 			vim.cmd.colorscheme("onedark")
 		end,
 	},
@@ -214,7 +222,7 @@ local lazy_plugins = {
 					section_separators = { left = "", right = "" },
 				},
 				sections = {
-					lualine_a = { "mode", paste_indicator }, -- 3. Use the function here
+					lualine_a = { "mode", paste_indicator },
 					lualine_b = { "filename" },
 					lualine_c = { "diff" },
 					lualine_x = {
