@@ -10,6 +10,8 @@ else
     echo "Local directory already exists"
 fi
 
+ln -sf "$HOME/dotfiles/assets" "$HOME/assets"
+
 # Create symlinks, and back up current ones
 echo -n "Linking dotfiles... "
 local_dir=$HOME/dotfiles/local
@@ -36,6 +38,17 @@ if [ -f ~/.config/nvim/init.lua ]; then
     mv ~/.config/nvim/init.lua "$backup_dir"
 fi
 ln -sf $local_dir/init.lua ~/.config/nvim/init.lua
+echo "DONE"
+
+# Link WezTerm config
+echo -n "Linking WezTerm config... "
+mkdir -p ~/.config/wezterm
+# Back up existing wezterm.lua if it exists
+if [ -f ~/.config/wezterm/wezterm.lua ]; then
+    mv ~/.config/wezterm/wezterm.lua "$backup_dir"
+fi
+# Linking from common folder as requested
+ln -sf $local_dir/wezterm.lua ~/.config/wezterm/wezterm.lua
 echo "DONE"
 
 # Install plugins
