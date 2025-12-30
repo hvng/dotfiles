@@ -5,3 +5,4 @@
 local/
 backup/
 tags
+.DS_Store
