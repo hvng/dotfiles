@@ -1,6 +1,8 @@
 local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 -- config.color_scheme = "Atom" -- catppuccin-mocha, Atom
+config.default_cursor_style = 'SteadyBar'
+config.cursor_thickness = '3px'
 config.enable_tab_bar = false
 config.scrollback_lines = 100000
 config.font_size = 16
