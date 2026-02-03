@@ -50,7 +50,10 @@ vim.keymap.set("n", "<Leader>rw", ":%s/\\<<C-r><C-w>\\>/", { desc = "[Edit] Repl
 vim.keymap.set("n", "Y", "y$", { desc = "[Edit] Yank to End of Line" })
 vim.keymap.set("n", "D", "d$", { desc = "[Edit] Delete to End of Line" })
 vim.keymap.set("n", "<Leader>6", "<C-^>", { desc = "[Window] Switch to Last Buffer" })
-
+vim.keymap.set("n", "<Leader>cw", function()
+vim.cmd([[%s/\s\+$//e]])
+	vim.notify("Trailing whitespace removed", vim.log.levels.INFO, { title = "Whitespace" })
+end, { desc ="[Code] Clean trailing whitespace" })
 
 -- Window cleanup
 vim.keymap.set("n", "<Leader>c", function()
