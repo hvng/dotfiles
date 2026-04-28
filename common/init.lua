@@ -50,10 +50,8 @@ vim.keymap.set("n", "<Leader>rw", ":%s/\\<<C-r><C-w>\\>/", { desc = "[Edit] Repl
 vim.keymap.set("n", "Y", "y$", { desc = "[Edit] Yank to End of Line" })
 vim.keymap.set("n", "D", "d$", { desc = "[Edit] Delete to End of Line" })
 vim.keymap.set("n", "<Leader>6", "<C-^>", { desc = "[Window] Switch to Last Buffer" })
-vim.keymap.set("n", "<Leader>cw", function()
-vim.cmd([[%s/\s\+$//e]])
-	vim.notify("Trailing whitespace removed", vim.log.levels.INFO, { title = "Whitespace" })
-end, { desc ="[Code] Clean trailing whitespace" })
+vim.keymap.set("n", "<Leader>ra", 'ggVG"_d"+p', { desc = "[Code] Replace all with clipboard" })
+vim.keymap.set("n", "<Leader>cw", function() vim.cmd([[%s/\s\+$//e]]) end, { desc ="[Code] Clean trailing whitespace" })
 
 -- Window cleanup
 vim.keymap.set("n", "<Leader>c", function()
@@ -74,9 +72,10 @@ vim.keymap.set("n", "<Leader>c", function()
 end, { desc = "[Window] Close Special Windows" })
 
 -- Friendly mode ^^
-local friendly_mode_is_active = true
+vim.g.friendly_mode_default = vim.g.friendly_mode_default or false
+local is_friendly_mode_active = true
 local function toggle_friendly_mode(verbose)
-	if friendly_mode_is_active then
+	if is_friendly_mode_active then
 		vim.keymap.set("n", "<Up>", function()
 			vim.cmd("resize -3")
 		end, { desc = "[Window] Decrease Height" })
@@ -90,7 +89,7 @@ local function toggle_friendly_mode(verbose)
 			vim.cmd("vertical resize +3")
 		end, { desc = "[Window] Increase Width" })
 		vim.opt.mouse = ""
-		friendly_mode_is_active = false
+		is_friendly_mode_active = false
 		if verbose then
 			vim.notify(
 				"Friendly mode disabled: Arrow keys resize splits.",
@@ -104,7 +103,7 @@ local function toggle_friendly_mode(verbose)
 		pcall(vim.api.nvim_del_keymap, "n", "<Left>")
 		pcall(vim.api.nvim_del_keymap, "n", "<Right>")
 		vim.opt.mouse = "a"
-		friendly_mode_is_active = true
+		is_friendly_mode_active = true
 		if verbose then
 			vim.notify("Friendly mode enabled: Arrow keys move cursor.", vim.log.levels.INFO, { title = "Mode Change" })
 		end
@@ -113,7 +112,9 @@ end
 vim.keymap.set("n", "<Leader>f", function()
 	toggle_friendly_mode(true)
 end, { silent = true, desc = "[UI] Toggle Friendly/Resize Mode" })
-toggle_friendly_mode(false) -- Disable by default
+if not vim.g.friendly_mode_default then -- Disable by default
+	toggle_friendly_mode(false)
+end
 
 -- Show virtual text for diagnostics (lsp errors, etc.)
 vim.diagnostic.config({
