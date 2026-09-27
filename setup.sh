@@ -10,7 +10,7 @@ usage() {
     echo -e "\t-c\tClang"
     echo -e "\t-y\tYarn (+nodejs)"
     echo -e "\t-h\tHugo"
-    echo -e "\t-i\tIBus Bamboo & Anthy"
+    echo -e "\t-i\tIBus: Bamboo (Vietnamese) & Japanese (Anthy, Mozc on Ubuntu)"
 }
 
 valid=0
@@ -135,9 +135,9 @@ fi
 
 if [[ $install_ibusbamboo = 1 ]]; then
     echo -e "\n---------"
-    echo "Installing IBus Bamboo"
+    echo "Installing IBus (Bamboo, Japanese)"
     echo "---------"
-    bash setup/install_ibus_bamboo_anthy.sh
+    bash setup/install_ibus.sh
 fi
 
 echo ""

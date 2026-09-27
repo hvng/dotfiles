@@ -34,7 +34,7 @@ Usage: ./setup.sh [-u] [-z] [-d] [-n] [-g] [-c] [-y] [-h] [-i]
         -c      Clang
         -y      Yarn (+nodejs)
         -h      Hugo
-        -i      IBus Bamboo & Anthy
+        -i      IBus: Bamboo (Vietnamese) & Japanese (Anthy, Mozc on Ubuntu)
 ```
 
 ## Structure
