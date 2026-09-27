@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 usage() {
@@ -6,6 +5,7 @@ usage() {
     echo -e "\t-u\tutilities: nvim, tmux, htop, ctags, xclip, ag, ..."
     echo -e "\t-z\tzsh"
     echo -e "\t-d\tdotfiles"
+    echo -e "\t-n\tNode.js"
     echo -e "\t-g\tGolang (1.7)"
     echo -e "\t-c\tClang"
     echo -e "\t-y\tYarn (+nodejs)"
@@ -15,6 +15,8 @@ usage() {
 
 valid=0
 install_dotfiles=0
+install_npm=0
+install_yarn=0
 install_common=0
 install_zsh=0
 install_golang=0
@@ -22,7 +24,7 @@ install_clang=0
 install_hugo=0
 install_ibusbamboo=0
 
-while getopts czdgyhi flag; do
+while getopts uzdngcyhi flag; do
   case $flag in
     u)
       valid=1
@@ -35,6 +37,10 @@ while getopts czdgyhi flag; do
     d)
       valid=1
       install_dotfiles=1
+      ;;
+    n)
+      valid=1
+      install_npm=1
       ;;
     g)
       valid=1
@@ -57,7 +63,8 @@ while getopts czdgyhi flag; do
       install_ibusbamboo=1
       ;;
     ?)
-      valid=0
+      usage
+      exit 2
       ;;
   esac
 done
@@ -89,6 +96,13 @@ if [[ $install_dotfiles = 1 ]]; then
     echo "Linking dotfiles"
     echo "---------"
     bash setup/dotfiles_linker.sh
+fi
+
+if [[ $install_npm = 1 ]]; then
+    echo -e "\n---------"
+    echo "Installing Node.js"
+    echo "---------"
+    bash setup/install_npm.sh
 fi
 
 if [[ $install_yarn = 1 ]]; then

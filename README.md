@@ -25,14 +25,16 @@ sudo apt install build-essential lsb-release
 Clone to `$HOME/dotfiles`:
 
 ```
-Usage: ./setup.sh [-c] [-z] [-d] [-g] [-y] [-h] [-i]
-        -c      common utilities: nvim, tmux, htop, ctags, xclip, ag, ...
+Usage: ./setup.sh [-u] [-z] [-d] [-n] [-g] [-c] [-y] [-h] [-i]
+        -u      utilities: nvim, tmux, htop, ctags, xclip, ag, ...
         -z      zsh
         -d      dotfiles
+        -n      Node.js
         -g      Golang (1.7)
+        -c      Clang
         -y      Yarn (+nodejs)
         -h      Hugo
-        -i      IBus Bamboo, IBus Anthy
+        -i      IBus Bamboo & Anthy
 ```
 
 ## Structure
