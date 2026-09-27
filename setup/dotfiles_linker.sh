@@ -52,8 +52,11 @@ ln -sf $local_dir/wezterm.lua ~/.config/wezterm/wezterm.lua
 echo "DONE"
 
 # Install plugins
-echo -n "Setting up Neovim plugins... "
-nvim --headless -c 'Lazy sync' -c 'qa'
-
-echo "DONE"
+if command -v nvim >/dev/null; then
+    echo -n "Setting up Neovim plugins... "
+    nvim --headless -c 'Lazy sync' -c 'qa'
+    echo "DONE"
+else
+    echo "nvim not found, skipping plugin setup (run ./setup.sh -u, then open nvim)"
+fi
 
