@@ -10,7 +10,7 @@ else
     echo "Local directory already exists"
 fi
 
-ln -sf "$HOME/dotfiles/assets" "$HOME/assets"
+ln -sfn "$HOME/dotfiles/assets" "$HOME/assets"
 
 # Create symlinks, and back up current ones
 echo -n "Linking dotfiles... "
