@@ -6,8 +6,10 @@ config.cursor_thickness = '3px'
 config.enable_tab_bar = false
 config.scrollback_lines = 100000
 config.font_size = 16
+-- Menlo only exists on macOS; JetBrains Mono is bundled with WezTerm.
+local is_mac = wezterm.target_triple:find("darwin") ~= nil
 config.font = wezterm.font_with_fallback({
-	"Menlo",
+	is_mac and "Menlo" or "JetBrains Mono",
 })
 config.window_decorations = "TITLE | RESIZE"
 config.window_padding = {
