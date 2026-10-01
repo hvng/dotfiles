@@ -11,6 +11,13 @@ local is_mac = wezterm.target_triple:find("darwin") ~= nil
 config.font = wezterm.font_with_fallback({
 	is_mac and "Menlo" or "JetBrains Mono",
 })
+
+-- WezTerm talks to X11 directly, not through GTK, so it ignores
+-- GTK_IM_MODULE/XMODIFIERS; it needs the IM server name set explicitly.
+if not is_mac then
+	config.use_ime = true
+	config.xim_im_name = "ibus"
+end
 config.window_decorations = "TITLE | RESIZE"
 config.window_padding = {
 	left = 0,
