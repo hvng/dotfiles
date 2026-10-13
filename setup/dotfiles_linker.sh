@@ -47,8 +47,17 @@ mkdir -p ~/.config/wezterm
 if [ -f ~/.config/wezterm/wezterm.lua ]; then
     mv ~/.config/wezterm/wezterm.lua "$backup_dir"
 fi
-# Linking from common folder as requested
 ln -sf $local_dir/wezterm.lua ~/.config/wezterm/wezterm.lua
+echo "DONE"
+
+# Link Ghostty config
+echo -n "Linking Ghostty config... "
+mkdir -p ~/.config/ghostty
+# Back up existing config if it exists
+if [ -f ~/.config/ghostty/config ]; then
+    mv ~/.config/ghostty/config "$backup_dir"
+fi
+ln -sf $local_dir/ghostty-config ~/.config/ghostty/config
 echo "DONE"
 
 # Install plugins

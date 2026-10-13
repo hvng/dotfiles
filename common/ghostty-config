@@ -1,0 +1,17 @@
+font-family = Menlo
+font-size = 16
+
+cursor-style = bar
+cursor-style-blink = false
+
+window-padding-x = 0
+window-padding-y = 0
+
+window-decoration = true
+macos-titlebar-style = native
+
+background-image = ~/assets/y.jpg
+background-image-opacity = 0.15
+background-image-fit = cover
+background-image-repeat = false
+
