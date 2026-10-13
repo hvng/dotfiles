@@ -1,4 +1,6 @@
 font-family = Menlo
+font-family = Noto Sans Mono
+font-family = DejaVu Sans Mono
 font-size = 16
 
 cursor-style = bar
